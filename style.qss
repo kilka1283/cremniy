@@ -44,6 +44,15 @@ QTabWidget::pane {
     border: 1px solid #262626;
 }
 
+#filesTabWidget QTabBar::close-button {
+    image: url(:/close.png);
+    subcontrol-position: right;
+}
+
+#filesTabWidget QTabBar::close-button:hover {
+    image: url(:/close.png);
+}
+
 #filesTabWidget QTabBar::tab {
     background: #262626;
     border: 1px solid #1f1f1f;
@@ -61,6 +70,7 @@ QTabWidget::pane {
         stop:0.93 #0000ff,
         stop:1 #0000ff
     );
+
 }
 
 #toolTabWidget QTabBar::tab {
@@ -81,6 +91,7 @@ QTabWidget::pane {
         stop:0.93 #0000ff,
         stop:1 #0000ff
     );
+    height: 20px;
 }
 
 QTreeView::item:selected {

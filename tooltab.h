@@ -1,6 +1,7 @@
 #ifndef TOOLTAB_H
 #define TOOLTAB_H
 
+#include "filetab.h"
 #include <QTabWidget>
 
 class QVBoxLayout;
@@ -16,7 +17,10 @@ class ToolTab : public QTabWidget
 {
     Q_OBJECT
 public:
-    ToolTab(QWidget *parent, QString path);
+    ToolTab(FileTab *fwparent, QString path);
+
+    QCodeEditor* get_codeEditor();
+
 private:
 
     void loadStyle(QString path, QString name);

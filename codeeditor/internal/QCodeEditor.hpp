@@ -33,6 +33,9 @@ public:
      * index.
      * @return Index.
      */
+
+
+
     int getFirstVisibleBlock();
 
     /**

@@ -1,5 +1,6 @@
 #include "tooltab.h"
 #include "codeeditor.h"
+#include "filetab.h"
 #include <QCodeEditor>
 #include <QFile>
 #include <QSyntaxStyle>
@@ -18,7 +19,7 @@
 #include <qboxlayout.h>
 #include <qfileinfo.h>
 
-ToolTab::ToolTab(QWidget *parent, QString path) :
+ToolTab::ToolTab(FileTab *fwparent, QString path) :
     m_codeEditor(nullptr),
     m_completers(),
     m_highlighters(),
@@ -64,6 +65,12 @@ ToolTab::ToolTab(QWidget *parent, QString path) :
     this->addTab(emptyWidget1, hexIcon, "Hex");
     this->addTab(emptyWidget2, disasmIcon, "Disassembler");
 
+    FileTab* parrentTabWidget = qobject_cast<FileTab*>(parent());
+
+}
+
+QCodeEditor* ToolTab::get_codeEditor(){
+    return m_codeEditor;
 }
 
 void ToolTab::loadStyle(QString path, QString name)

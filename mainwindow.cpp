@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "QCodeEditor.hpp"
 #include "filetab.h"
 #include "filetreeview.h"
 #include "filecreatedialog.h"
@@ -59,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     ui->filesTabWidget->setTabsClosable(true);
+    ui->filesTabWidget->setMovable(true);
 
     connect(ui->actionSave_File, &QAction::triggered, this, &MainWindow::onSaveFile);
 
@@ -67,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
                 ui->filesTabWidget->removeTab(index);
             });
 
+    ui->actionSave_File->setShortcut(QKeySequence::Save);
 
     ui->treeView->setEditTriggers(QAbstractItemView::EditKeyPressed);
 
@@ -84,19 +87,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onSaveFile()
 {
-    FileTab *cfiletab = qobject_cast<FileTab*>(ui->filesTabWidget->currentWidget());
-    if (!cfiletab) return;
-    qDebug() << "Save: " << cfiletab->filePath;
-
-    QFile file(cfiletab->filePath);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return;
-
-    ToolTab* tooltabInner = ui->filesTabWidget->findChild<ToolTab*>("toolTabWidget");
-    tooltabInner.
-    QByteArray data = .toUtf8();
-    file.write(data);
-    file.close();
+    ui->filesTabWidget->saveCurrentFile();
 }
 
 void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)

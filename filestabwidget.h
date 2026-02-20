@@ -11,6 +11,8 @@ public:
 
     void tabSelect(int index);
     void openFile(QString fullPath, QString fileName);
+    void saveCurrentFile();
+
 };
 
 #endif // FILESTABWIDGET_H
