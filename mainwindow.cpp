@@ -178,17 +178,21 @@ void MainWindow::onTreeContextMenu(const QPoint &pos)
                 // Включаем редактирование индекса
                 ui->treeView->edit(index);
             });
-            menu.addAction("Delete", [index]() {
-
+            menu.addAction("Delete", [path, this]() {
+                QDir dir(path);
+                QString dialogTitle = QString("Are you sure you want to delete the folder \"%1\"?").arg(dir.dirName());
+                auto res = QMessageBox::question(this, "Delete", dialogTitle, QMessageBox::Ok | QMessageBox::Cancel);
+                if (res == QMessageBox::Ok) dir.removeRecursively();
             });
             menu.addSeparator();
             menu.addAction("Create File", [path,this]() {
-                FileCreateDialog fcd(this,path);
+                FileCreateDialog fcd(this,path,false);
                 fcd.exec();
 
             });
-            menu.addAction("Create Folder", [index]() {
-
+            menu.addAction("Create Folder", [path,this]() {
+                FileCreateDialog fcd(this,path,true);
+                fcd.exec();
             });
         }
         else{
@@ -207,8 +211,10 @@ void MainWindow::onTreeContextMenu(const QPoint &pos)
                 // Включаем редактирование индекса
                 ui->treeView->edit(index);
             });
-            menu.addAction("Delete", [index]() {
-
+            menu.addAction("Delete", [path,this]() {
+                QString dialogTitle = QString("Are you sure you want to delete the file \"%1\"?").arg(QFileInfo(path).fileName());
+                auto res = QMessageBox::question(this, "Delete", dialogTitle, QMessageBox::Ok | QMessageBox::Cancel);
+                if (res == QMessageBox::Ok) QFile(path).remove();
             });
         }
 
@@ -219,12 +225,12 @@ void MainWindow::onTreeContextMenu(const QPoint &pos)
     else{
         QString path = model->rootPath();
         menu.addAction("Create File", [path,this]() {
-            FileCreateDialog fcd(this,path);
+            FileCreateDialog fcd(this,path,false);
             fcd.exec();
-
         });
-        menu.addAction("Create Folder", [index]() {
-
+        menu.addAction("Create Folder", [path,this]() {
+            FileCreateDialog fcd(this,path,true);
+            fcd.exec();
         });
     }
     menu.exec(ui->treeView->viewport()->mapToGlobal(pos));

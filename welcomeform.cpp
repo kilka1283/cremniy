@@ -139,7 +139,11 @@ WelcomeForm::~WelcomeForm()
 
 void WelcomeForm::SelectProjectInList(){
     open_recent_proj_btn->setEnabled(true);
-    open_recent_proj_btn->setStyleSheet("QPushButton { background-color: #163318; border: 1px solid #2c7c32; } QPushButton:pressed { background-color: #163318; border: 2px solid #2c7c32; font-weight: bold; } ");
+    open_recent_proj_btn->setStyleSheet(""
+                                        "QPushButton { border: 1px solid #2c7c32; } "
+                                        "QPushButton:hover { background-color: #163318; border: 1px solid #2c7c32; } "
+                                        "QPushButton:pressed { background-color: #163318; border: 2px solid #2c7c32; font-weight: bold; } "
+                                        );
 }
 
 void WelcomeForm::OpenRecentProjectHandler(){
