@@ -20,19 +20,19 @@ FileTab::FileTab(FilesTabWidget *ftparent, QString path, QWidget* parent)
             this, &FileTab::giveData);
 }
 
-void FileTab::openFile(int index){
+void FileTab::openFile(int index, int excluded_index){
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) return;
     QByteArray data = file.readAll();
     file.close();
-    m_tooltabWidget->setDataInTabs(data, index);
+    m_tooltabWidget->setDataInTabs(data, index, excluded_index);
 }
 
 void FileTab::saveFile(){
-    m_tooltabWidget->saveToFileCurrentTab(filePath);
+    int excluded_index = m_tooltabWidget->saveToFileCurrentTab(filePath);
+    openFile(-1,excluded_index);
 }
 
 void FileTab::giveData(int index){
-    qDebug() << index;
     openFile(index);
 }

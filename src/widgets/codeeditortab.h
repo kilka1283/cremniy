@@ -16,14 +16,19 @@ private:
     QCodeEditor* m_codeEditorWidget;
     QWidget* m_overlayWidget;
     bool forceSetData = false;
+    uint dataHash = 0;
 
 public:
     explicit CodeEditorTab(QWidget *parent, QString path);
 
     void saveToFile(QString path) override {
+        QByteArray data = m_codeEditorWidget->getBData();
+        uint newDataHash = qHash(data, 0);
+        if (newDataHash == dataHash) return;
+        dataHash = newDataHash;
         QFile f(path);
         if (!f.open(QFile::WriteOnly)) return;
-        f.write(m_codeEditorWidget->getBData());
+        f.write(data);
         f.close();
         m_codeEditorWidget->document()->setModified(false);
     };
@@ -35,6 +40,7 @@ public:
             m_overlayWidget->show();
         }
         else{
+            dataHash = qHash(data, 0);
             m_codeEditorWidget->show();
             m_overlayWidget->hide();
             m_codeEditorWidget->setBData(data);
@@ -44,6 +50,7 @@ public:
 
 signals:
     void modifyData(bool modified);
+    void dataEqual();
     void askData();
     void setHexViewTab();
 };

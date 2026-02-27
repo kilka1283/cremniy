@@ -26,6 +26,8 @@ private slots:
 
     void onSaveFile();
 
+    void on_menuBar_actionView_wordWrap_clicked();
+
 private:
     Ui::MainWindow *ui;
     void SaveProjectInCache(const QString project_path);

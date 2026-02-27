@@ -223,7 +223,6 @@ void WelcomeForm::L2CreateButton()
     }
 
     QString new_project_path = path_lineEdit->text() + "/" + project_name;
-    qDebug() << new_project_path;
 
     QDir dir;
     if (dir.exists(new_project_path)){

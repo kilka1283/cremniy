@@ -17,7 +17,7 @@ public:
     explicit FileTab(FilesTabWidget *ftparent, QString path, QWidget* parrent = nullptr);
     QString filePath;
     void saveFile();
-    void openFile(int index = -1);
+    void openFile(int index = -1, int excluded_index = -1);
 public slots:
     void giveData(int index);
 };

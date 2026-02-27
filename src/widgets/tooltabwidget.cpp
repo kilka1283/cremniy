@@ -35,12 +35,24 @@ ToolTabWidget::ToolTabWidget(QWidget *parent, QString path)
             this, &ToolTabWidget::giveData);
     connect(m_codeEditorTab, &CodeEditorTab::setHexViewTab,
             this, &ToolTabWidget::setHexViewTab);
+    connect(m_codeEditorTab, &CodeEditorTab::dataEqual,
+            this, &ToolTabWidget::removeStar);
 
     connect(m_hexViewTab, &HexViewTab::modifyData,
             this, &ToolTabWidget::onTabModified);
     connect(m_disassemblerTab, &DisassemblerTab::modifyData,
             this, &ToolTabWidget::onTabModified);
 
+}
+
+void ToolTabWidget::removeStar(){
+    QObject* s = sender();
+    int index = -1;
+    if (s == m_codeEditorTab)
+        index = this->indexOf(m_codeEditorTab);
+    QString text = tabText(index);
+    text.replace("*", "");
+    setTabText(index, text);
 }
 
 void ToolTabWidget::setHexViewTab(){
@@ -55,6 +67,8 @@ void ToolTabWidget::giveData(){
         index = this->indexOf(m_codeEditorTab);
     else if (s == m_hexViewTab)
         index = this->indexOf(m_hexViewTab);
+    else if (s == m_disassemblerTab)
+        index = this->indexOf(m_disassemblerTab);
 
     if (index >= 0){
         emit askData(index);
@@ -73,27 +87,27 @@ void ToolTabWidget::onTabModified(bool modified)
 
     QString text = tabText(index);
     if (!text.endsWith("*")){
-        qDebug() << "if";
         setTabText(index, text + "*");
     }
 
 }
 
-void ToolTabWidget::saveToFileCurrentTab(QString path){
+int ToolTabWidget::saveToFileCurrentTab(QString path){
     QWidget* w = currentWidget();
     int index = currentIndex();
-    if (!w) return;
+    if (!w) return -1;
 
     ToolTab* tab = dynamic_cast<ToolTab*>(w);
-    if (!tab) return;
+    if (!tab) return -1;
 
     tab->saveToFile(path);
     QString text = tabText(index);
     text.replace("*", "");
     setTabText(index, text);
+    return index;
 }
 
-void ToolTabWidget::setDataInTabs(QByteArray &data, int index){
+void ToolTabWidget::setDataInTabs(QByteArray &data, int index, int excluded_index){
     if (index >= 0){
         QWidget* w = widget(index);
         if (!w) return;
@@ -105,6 +119,7 @@ void ToolTabWidget::setDataInTabs(QByteArray &data, int index){
     }
     else{
         for (int i = 0; i < count(); ++i) {
+            if (i == excluded_index) continue;
             QWidget* w = widget(i);
             if (!w) return;
 

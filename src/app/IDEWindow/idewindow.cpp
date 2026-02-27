@@ -73,12 +73,17 @@ IDEWindow::IDEWindow(QString ProjectPath, QJsonObject ProjectInfo, QWidget *pare
     connect(ui->treeView, &QTreeView::customContextMenuRequested,
             this, &IDEWindow::onTreeContextMenu);
 
+    connect(ui->actionWord_Wrap, &QAction::triggered, this, &IDEWindow::on_menuBar_actionView_wordWrap_clicked);
 
 }
 
 IDEWindow::~IDEWindow()
 {
     delete ui;
+}
+
+void IDEWindow::on_menuBar_actionView_wordWrap_clicked(){
+    qDebug() << "on_menuBar_actionView_wordWrap_clicked";
 }
 
 void IDEWindow::SaveProjectInCache(const QString project_path){

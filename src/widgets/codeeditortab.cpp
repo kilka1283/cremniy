@@ -66,9 +66,23 @@ CodeEditorTab::CodeEditorTab(QWidget *parent, QString path)
             &QTextDocument::modificationChanged,
             this,
             [this](bool modified){
-                qDebug() << "modified";
                 if (!m_codeEditorWidget->m_ignoreModification)
                     emit modifyData(true);
+            });
+
+    connect(m_codeEditorWidget->document(),
+            &QTextDocument::contentsChanged,
+            this,
+            [this](){
+                QByteArray data = m_codeEditorWidget->getBData();
+                uint newDataHash = qHash(data, 0);
+                if (dataHash == newDataHash) {
+                    emit dataEqual();
+                }
+                else{
+                    if (!m_codeEditorWidget->m_ignoreModification)
+                        emit modifyData(true);
+                }
             });
 
 }

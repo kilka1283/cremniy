@@ -21,7 +21,6 @@ protected:
             );
 
         if (!dir.isEmpty()) {
-            qDebug() << "Selected dir:" << dir;
             this->setText(dir);
         }
 
