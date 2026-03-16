@@ -12,6 +12,7 @@ class HexViewTab : public QWidget, public ToolTab
 
 private:
     QHexView* m_hexViewWidget;
+    QWidget* createPage();
 
 public:
     explicit HexViewTab(QWidget *parent, QString path);
