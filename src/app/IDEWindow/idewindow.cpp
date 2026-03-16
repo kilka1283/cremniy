@@ -50,33 +50,33 @@ IDEWindow::IDEWindow(QString ProjectPath, QWidget *parent)
     leftLayout->setContentsMargins(0,0,0,0);
     m_filesTreeView = new FileTreeView();
 
-    QHBoxLayout* testbtn_layout = new QHBoxLayout();
-    QPushButton* test_button1 = new QPushButton();
-    QPushButton* test_button2 = new QPushButton();
-    QPushButton* test_button3 = new QPushButton();
+    QHBoxLayout* RunBuildBtns_layout = new QHBoxLayout();
+    QPushButton* RunButton = new QPushButton();
+    QPushButton* DebugButton = new QPushButton();
+    QPushButton* BuildButton = new QPushButton();
 
-    test_button1->setFixedWidth(30);
-    test_button1->setFixedHeight(30);
-    test_button1->setProperty("state", "green");
+    RunButton->setFixedWidth(30);
+    RunButton->setFixedHeight(30);
+    RunButton->setProperty("state", "green");
 
-    test_button2->setFixedWidth(30);
-    test_button2->setFixedHeight(30);
-    test_button2->setProperty("state", "green");
+    DebugButton->setFixedWidth(30);
+    DebugButton->setFixedHeight(30);
+    DebugButton->setProperty("state", "green");
 
-    test_button3->setFixedWidth(30);
-    test_button3->setFixedHeight(30);
+    BuildButton->setFixedWidth(30);
+    BuildButton->setFixedHeight(30);
 
-    testbtn_layout->setContentsMargins(0,0,0,0);
+    RunBuildBtns_layout->setContentsMargins(0,0,0,0);
 
-    testbtn_layout->addStretch();
-    testbtn_layout->addWidget(test_button1);
-    testbtn_layout->addWidget(test_button2);
-    testbtn_layout->addWidget(test_button3);
-    testbtn_layout->addStretch();
+    RunBuildBtns_layout->addStretch();
+    RunBuildBtns_layout->addWidget(RunButton);
+    RunBuildBtns_layout->addWidget(DebugButton);
+    RunBuildBtns_layout->addWidget(BuildButton);
+    RunBuildBtns_layout->addStretch();
 
     leftWidget->setLayout(leftLayout);
     leftLayout->addWidget(m_filesTreeView);
-    leftLayout->addLayout(testbtn_layout);
+    leftLayout->addLayout(RunBuildBtns_layout);
 
     // Tunning Widgets/Layouts
     m_fileMenu->addAction(m_file_openProject);

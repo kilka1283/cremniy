@@ -10,63 +10,77 @@
 HexViewTab::HexViewTab(QWidget *parent, QString path)
     : QWidget{parent}
 {
-    // main layout
+
+    // - - Tab Widgets - -
+
+    // Create Layout
     auto mainHexTabLayout = new QHBoxLayout(this);
     mainHexTabLayout->setSpacing(0);
     mainHexTabLayout->setContentsMargins(0,0,0,0);
     this->setLayout(mainHexTabLayout);
 
-    // types tab widget
+    // Create Tab Widgets
     QListWidget* tabsList = new QListWidget();
     tabsList->setObjectName("hexTabsList");
     tabsList->setFocusPolicy(Qt::NoFocus);
     QStackedWidget* tabView = new QStackedWidget();
+
+    // Add TabWidgets in Layout
     mainHexTabLayout->addWidget(tabView);
     mainHexTabLayout->addWidget(tabsList);
 
-    // Tabs List
+    // Add Tab Names in TabsList
     tabsList->addItem("Raw");
     tabsList->addItem("ELF");
     tabsList->addItem("PE");
     tabsList->addItem("MBR");
 
+    // - - Create Pages - -
+
     // RAW page
-    auto pageRaw = new QWidget();
-    auto pageRawLayout = new QVBoxLayout(pageRaw);
-    pageRawLayout->setContentsMargins(0,0,0,0);
-    m_hexViewWidget = new QHexView();
-    pageRawLayout->addWidget(m_hexViewWidget);
-    pageRaw->setLayout(pageRawLayout);
-    tabView->addWidget(pageRaw);
+    auto pageRaw = createPage();
+    pageRaw->layout()->addWidget(m_hexViewWidget);
 
     // ELF page
-    auto pageELF = new QWidget();
-    auto pageELFLayout = new QVBoxLayout(pageELF);
-    pageELF->setLayout(pageELFLayout);
-    tabView->addWidget(pageELF);
+    auto pageELF = createPage();
 
     // PE page
-    auto pagePE = new QWidget();
-    auto pagePELayout = new QVBoxLayout(pagePE);
-    pagePE->setLayout(pagePELayout);
-    tabView->addWidget(pagePE);
+    auto pagePE = createPage();
 
     // MBR page
-    auto pageMBR = new QWidget();
-    auto pageMBRLayout = new QVBoxLayout(pageMBR);
-    pageMBR->setLayout(pageMBRLayout);
+    auto pageMBR = createPage();
+
+    // - - End Configurate Tab Widgets - -
+
+    // Add Pages in TabView
+    tabView->addWidget(pageRaw);
+    tabView->addWidget(pageELF);
+    tabView->addWidget(pagePE);
     tabView->addWidget(pageMBR);
 
+    // Configurate
     tabsList->setCurrentRow(0);
-    // Connects
 
+    // - - Connects - -
+
+    // TabList: select tab
     connect(tabsList, &QListWidget::currentRowChanged,
                      tabView, &QStackedWidget::setCurrentIndex);
 
+    // hexViewWidget: data change
     connect(m_hexViewWidget->hexDocument(),
             &QHexDocument::dataChanged,
             this,
             [this](const QByteArray&, quint64, QHexChangeReason){
                 emit modifyData(true);
             });
+}
+
+// Create default page
+QWidget* HexViewTab::createPage(){
+    QWidget* pageWidget = new QWidget();
+    QVBoxLayout* pageWidgetLayout = new QVBoxLayout(pageWidget);
+    pageWidgetLayout->setContentsMargins(0,0,0,0);
+    pageWidget->setLayout(pageWidgetLayout);
+    return pageWidget;
 }
