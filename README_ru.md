@@ -32,6 +32,32 @@
 
 ---
 
+## Скриншоты
+
+<div align="center">
+
+**Главное меню**
+<img src="screenshots/main_menu.png" alt="Главное меню" width="800">
+
+<br><br>
+
+**Редактор кода**
+<img src="screenshots/code.png" alt="Редактор кода" width="800">
+
+<br><br>
+
+**Дизассемблер**
+<img src="screenshots/desassembler.png" alt="Дизассемблер" width="800">
+
+<br><br>
+
+**HEX-редактор**
+<img src="screenshots/hex.png" alt="HEX-редактор" width="800">
+
+</div>
+
+---
+
 ## Возможности
 
 ### Доступно сейчас
