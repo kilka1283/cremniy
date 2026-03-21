@@ -114,6 +114,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE codeeditor)
 target_link_libraries(${PROJECT_NAME} PRIVATE hexview)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${Qt6_DIR}/../../../bin")
+
+if(WIN32 AND QT_VERSION_MAJOR EQUAL 6)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${CMAKE_PREFIX_PATH}/bin/windeployqt.exe"
+                $<TARGET_FILE:${PROJECT_NAME}>
+        COMMENT "Deploying Qt dependencies"
+    )
+endif()
 
 if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.${PROJECT_NAME})
