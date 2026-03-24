@@ -5,10 +5,22 @@
 #include "tooltabwidget.h"
 #include "core/ToolTabFactory.h"
 #include "core/ToolTab.h"
+#include "core/FileDataBuffer.h"
 #include "utils/globalwidgetsmanager.h"
+#include "utils/filemanager.h"
+#include "utils/filecontext.h"
 
 ToolTabWidget::ToolTabWidget(QWidget *parent, QString path)
     {
+
+    // Создаем общий буфер данных для всех вкладок
+    m_sharedBuffer = new FileDataBuffer(this);
+
+    // Загружаем данные файла в буфер
+    FileContext* fileContext = new FileContext(path);
+    QByteArray fileData = FileManager::openFile(fileContext);
+    m_sharedBuffer->setData(fileData);
+    delete fileContext;
 
     // Tools
 
@@ -16,7 +28,7 @@ ToolTabWidget::ToolTabWidget(QWidget *parent, QString path)
 
     qDebug() << "ToolTabWidget constr: for id in avTabs";
     for (const QString& toolID : toolFactory.availableTabs()){
-        ToolTab* tab = toolFactory.create(toolID);
+        ToolTab* tab = toolFactory.create(toolID, m_sharedBuffer);
         qDebug() << "availableTab: " << tab->toolName();
 
         tab->setFile(path);

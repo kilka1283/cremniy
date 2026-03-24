@@ -33,8 +33,8 @@
 #include "core/ToolTabFactory.h"
 
 static bool registered = [](){
-    ToolTabFactory::instance().registerTab("3", [](){
-        return new DisassemblerTab();
+    ToolTabFactory::instance().registerTab("3", [](FileDataBuffer* buffer){
+        return new DisassemblerTab(buffer);
     });
     return true;
 }();
@@ -240,8 +240,8 @@ QString DisassemblerTab::formatLine(const LineInfo &li) const
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-DisassemblerTab::DisassemblerTab(QWidget *parent)
-    : ToolTab{parent}
+DisassemblerTab::DisassemblerTab(FileDataBuffer* buffer, QWidget *parent)
+    : ToolTab{buffer, parent}
 {
     setupUi();
 
@@ -289,6 +289,65 @@ void DisassemblerTab::setFile(QString filepath){
 void DisassemblerTab::setTabData()
 {
     startDisassembly();
+}
+
+void DisassemblerTab::onSelectionChanged(qint64 pos, qint64 length)
+{
+    if (m_updatingSelection) return; // Предотвращаем рекурсию
+    
+    m_updatingSelection = true;
+    
+    Q_UNUSED(length);
+    
+    // Ищем инструкцию, которая соответствует байтовому смещению
+    // Для этого нужно преобразовать файловое смещение в виртуальный адрес
+    
+    // Простая реализация: ищем ближайший адрес
+    if (m_lines.isEmpty()) {
+        m_updatingSelection = false;
+        return;
+    }
+    
+    // Преобразуем смещение в hex строку для поиска
+    QString targetAddr = QString("0x%1").arg(pos, 0, 16);
+    
+    // Ищем строку с ближайшим адресом
+    int bestLine = -1;
+    quint64 targetOffset = pos;
+    quint64 minDiff = UINT64_MAX;
+    
+    for (int i = 0; i < m_lines.size(); ++i) {
+        const LineInfo& li = m_lines[i];
+        if (li.address.isEmpty()) continue;
+        
+        // Парсим адрес
+        bool ok = false;
+        QString addrStr = li.address;
+        if (addrStr.startsWith("0x", Qt::CaseInsensitive)) {
+            addrStr = addrStr.mid(2);
+        }
+        quint64 addr = addrStr.toULongLong(&ok, 16);
+        
+        if (ok) {
+            quint64 diff = (addr > targetOffset) ? (addr - targetOffset) : (targetOffset - addr);
+            if (diff < minDiff) {
+                minDiff = diff;
+                bestLine = i;
+            }
+        }
+    }
+    
+    // Выделяем найденную строку в дизассемблере
+    if (bestLine >= 0 && bestLine < m_visibleLineMap.size()) {
+        QTextCursor cursor = m_disasmView->textCursor();
+        cursor.movePosition(QTextCursor::Start);
+        cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, bestLine);
+        cursor.select(QTextCursor::LineUnderCursor);
+        m_disasmView->setTextCursor(cursor);
+        m_disasmView->ensureCursorVisible();
+    }
+    
+    m_updatingSelection = false;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -442,6 +501,40 @@ void DisassemblerTab::setupUi()
         "QPlainTextEdit::selection { background: #2d2d50; color: #ffffff; }");
     m_disasmView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_disasmHighlighter = new DisasmTextHighlighter(m_disasmView->document());
+
+    // Обработчик выделения в дизассемблере - уведомляем буфер
+    connect(m_disasmView, &QPlainTextEdit::selectionChanged, this, [this]() {
+        if (m_updatingSelection) return; // Предотвращаем рекурсию
+        
+        QTextCursor cursor = m_disasmView->textCursor();
+        if (!cursor.hasSelection()) return;
+        
+        int visLine = cursor.blockNumber();
+        if (visLine < 0 || visLine >= m_visibleLineMap.size()) return;
+        
+        int idx = m_visibleLineMap[visLine];
+        if (idx < 0 || idx >= m_lines.size()) return;
+        
+        const LineInfo& li = m_lines[idx];
+        if (li.address.isEmpty()) return;
+        
+        // Парсим адрес инструкции
+        bool ok = false;
+        QString addrStr = li.address;
+        if (addrStr.startsWith("0x", Qt::CaseInsensitive)) {
+            addrStr = addrStr.mid(2);
+        }
+        quint64 addr = addrStr.toULongLong(&ok, 16);
+        
+        if (ok) {
+            // Парсим длину байтов инструкции
+            QString bytesStr = normalizeBytes(li.bytes);
+            qint64 length = bytesStr.size() / 2; // каждый байт = 2 hex символа
+            
+            // Уведомляем буфер о выделении
+            m_dataBuffer->setSelection(addr, length);
+        }
+    });
 
     connect(m_disasmView, &QPlainTextEdit::customContextMenuRequested, this, [this](const QPoint &pos) {
         if (!m_disasmView) return;

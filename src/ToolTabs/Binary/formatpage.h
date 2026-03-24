@@ -19,10 +19,14 @@ public:
 
     virtual void setPageData(QByteArray& data) = 0;
     virtual QByteArray getPageData() const = 0;
+    
+    // Установить выделение (pos - позиция байта, length - длина)
+    virtual void setSelection(qint64 pos, qint64 length) = 0;
 
 signals:
     void modifyData();
     void dataEqual();
+    void selectionChanged(qint64 pos, qint64 length);
 
 
 };

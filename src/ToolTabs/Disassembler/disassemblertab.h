@@ -28,7 +28,7 @@ class DisassemblerTab : public ToolTab
     Q_OBJECT
 
 public:
-    explicit DisassemblerTab(QWidget *parent = nullptr);
+    explicit DisassemblerTab(FileDataBuffer* buffer, QWidget *parent = nullptr);
     ~DisassemblerTab();
 
     QString toolName() const override { return "Disassembler"; };
@@ -60,6 +60,10 @@ public slots:
     void setFile(QString filepath) override;
     void setTabData() override;
     void saveTabData() override {};
+
+protected slots:
+    // Обработчик изменения выделения из буфера
+    void onSelectionChanged(qint64 pos, qint64 length) override;
 
 private slots:
 
@@ -94,6 +98,7 @@ private:
     QThread            *m_thread  = nullptr;
     DisassemblerWorker *m_worker  = nullptr;
     bool                m_running = false;
+    bool                m_updatingSelection = false; // Флаг для предотвращения рекурсии
 
     QVector<DisasmSection> m_sections;
     QVector<DisasmFunction> m_functions;

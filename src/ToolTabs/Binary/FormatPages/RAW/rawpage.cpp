@@ -34,6 +34,16 @@ RAWPage::RAWPage(QWidget *parent)
                 }
             });
 
+    // Отслеживаем изменение выделения в hex view
+    connect(m_hexViewWidget->hexCursor(), &QHexCursor::positionChanged,
+            this, [this](){
+                if (m_hexViewWidget->hexCursor()->hasSelection()) {
+                    qint64 start = m_hexViewWidget->hexCursor()->selectionStartOffset();
+                    qint64 length = m_hexViewWidget->hexCursor()->selectionLength();
+                    emit selectionChanged(start, length);
+                }
+            });
+
 }
 
 void RAWPage::setPageData(QByteArray& data) {
@@ -44,5 +54,11 @@ void RAWPage::setPageData(QByteArray& data) {
 
 QByteArray RAWPage::getPageData() const {
     return m_hexViewWidget->getBData();
+}
+
+void RAWPage::setSelection(qint64 pos, qint64 length) {
+    // Устанавливаем выделение в hex view
+    m_hexViewWidget->hexCursor()->move(pos);
+    m_hexViewWidget->hexCursor()->selectSize(length);
 }
 
