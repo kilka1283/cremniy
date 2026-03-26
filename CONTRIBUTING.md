@@ -1,5 +1,7 @@
 <div align="center">
 
+[![Community](https://img.shields.io/badge/Community-Telegram-blue?logo=telegram&style=flat-square)](https://t.me/cremniy_com)
+
 English • [Русский](CONTRIBUTING_ru.md)
 	
 </div>
