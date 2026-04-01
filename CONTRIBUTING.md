@@ -28,6 +28,11 @@ If you find a bug, please open an Issue and include:
 - steps to reproduce it
 - your OS and environment
 
+## Development Plan
+
+All current **tasks** and **project plans** are **collected** in the [roadmap](ROADMAP.md).  
+Before creating an Issue or PR, we **recommend checking** what is already planned to **avoid duplicating work**.
+
 ## Suggesting features
 
 If you have an idea for a new feature, feel free to open an Issue and describe it.
