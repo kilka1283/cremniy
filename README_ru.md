@@ -115,6 +115,7 @@ mkdir build && cd build
 cmake ../src
 cmake --build .
 ```
+
 ### Сборка в Arch
 ```bash
 git clone https://github.com/igmunv/cremniy.git
@@ -122,7 +123,6 @@ cd cremniy
 
 makepkg -si
 ```
-Примечание: Если `makepkg -si` не работает, попробуйте снова ввести команду.
 
 #### Сборка в режиме Release
 

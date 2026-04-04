@@ -123,7 +123,6 @@ cd cremniy
 
 makepkg -si
 ```
-Note: If `makepkg -si` fails, please try running the command again.
 
 #### Release build
 
